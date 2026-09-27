@@ -68,7 +68,7 @@ jobs:
           disable-animations: true
           script: |
             bash ./gradlew --no-daemon connectedDebugAndroidTest
-            adb pull /sdcard/Android/data/es.fuelradar.app/files/fuelradar-home.png app/build/reports/androidTests/fuelradar-home.png
+            adb pull /sdcard/Download/fuelradar-home.png app/build/reports/androidTests/fuelradar-home.png
       - uses: actions/upload-artifact@v4
         if: always()
         with:

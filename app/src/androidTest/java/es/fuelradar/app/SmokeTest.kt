@@ -1,11 +1,13 @@
 package es.fuelradar.app
 
 import android.graphics.Bitmap
+import android.os.ParcelFileDescriptor
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -30,6 +32,10 @@ class SmokeTest {
         compose.onRoot().captureToImage().asAndroidBitmap().let { bitmap ->
             File(app.getExternalFilesDir(null), "fuelradar-home.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
         }
+        // UTP uninstalls the test app after execution; keep the report outside its data directory.
+        val screenshot = File(app.getExternalFilesDir(null), "fuelradar-home.png").absolutePath
+        val copy = InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand("cp $screenshot /sdcard/Download/fuelradar-home.png")
+        ParcelFileDescriptor.AutoCloseInputStream(copy).use { it.readBytes() }
         compose.onNodeWithText("25 km").performClick()
         compose.onNodeWithText("Distancia", substring = false).performClick()
         compose.onNodeWithTag("station-list").performScrollToNode(hasText("Estación de prueba"))
