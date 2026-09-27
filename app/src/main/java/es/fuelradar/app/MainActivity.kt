@@ -79,7 +79,7 @@ class MainActivity : ComponentActivity() {
         else vm.alerts(true)
     }
     Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Ink, Color(0xFF103B43), Ink)))) {
-        Scaffold(containerColor = Color.Transparent, topBar = {
+        Scaffold(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onBackground, topBar = {
             TopAppBar(title = {
                 Column {
                     Text("FuelRadar", fontWeight = FontWeight.ExtraBold, color = Color.White)

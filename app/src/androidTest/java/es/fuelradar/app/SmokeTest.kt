@@ -29,13 +29,7 @@ class SmokeTest {
         compose.setContent { FuelRadarTheme { FuelRadarScreen(vm) } }
         compose.waitUntil(10_000) { vm.state.value.stations.isNotEmpty() && !vm.state.value.loading }
         compose.onNodeWithText("FuelRadar").assertIsDisplayed()
-        compose.onRoot().captureToImage().asAndroidBitmap().let { bitmap ->
-            File(app.getExternalFilesDir(null), "fuelradar-home.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
-        }
-        // UTP uninstalls the test app after execution; keep the report outside its data directory.
-        val screenshot = File(app.getExternalFilesDir(null), "fuelradar-home.png").absolutePath
-        val copy = InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand("cp $screenshot /sdcard/Download/fuelradar-home.png")
-        ParcelFileDescriptor.AutoCloseInputStream(copy).use { it.readBytes() }
+        capture("home")
         compose.onNodeWithTag("station-list").performScrollToNode(hasText("25 km"))
         compose.onNodeWithText("25 km").performClick()
         compose.onNodeWithText("Distancia", substring = false).performClick()
@@ -53,6 +47,7 @@ class SmokeTest {
         compose.onNodeWithTag("station-list").performScrollToNode(hasText("1,449"))
         compose.onNodeWithText("1,449").assertIsDisplayed()
         compose.onNodeWithText("Ahorro", substring = false).performClick()
+        capture("rewards")
         compose.onNodeWithTag("rewards-list").performScrollToNode(hasText("Waylet"))
         compose.onNodeWithContentDescription("Seguir Waylet").performClick()
         compose.onNodeWithContentDescription("Dejar de seguir Waylet").assertExists()
@@ -62,6 +57,7 @@ class SmokeTest {
         compose.onNodeWithTag("voucher-code").performTextInput("SOLO-TEST")
         compose.onNodeWithText("Guardar vale", substring = false).performClick()
         compose.onNodeWithText("Vale de prueba local").assertExists()
+        capture("wallet")
         compose.onNodeWithTag("voucher-list").performScrollToNode(hasText("Marcar usado"))
         compose.onNodeWithText("Marcar usado").performClick()
         compose.onNodeWithText("Marcado como usado").assertExists()
@@ -69,5 +65,19 @@ class SmokeTest {
         compose.onNodeWithText("Eliminar", substring = false).performClick()
         compose.onNodeWithText("Eliminar vale").performClick()
         compose.onNodeWithText("Tu próximo ahorro empieza en Ahorro").assertExists()
+        compose.onNodeWithText("Ajustes", substring = false).performClick()
+        capture("settings")
+    }
+
+    private fun capture(name: String) {
+        compose.waitForIdle()
+        val app = ApplicationProvider.getApplicationContext<FuelRadarApplication>()
+        val file = File(app.getExternalFilesDir(null), "fuelradar-$name.png")
+        compose.onRoot().captureToImage().asAndroidBitmap().let { bitmap ->
+            file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        }
+        // UTP uninstalls the test app; preserve screenshots outside its data directory.
+        val copy = InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand("cp ${file.absolutePath} /sdcard/Download/${file.name}")
+        ParcelFileDescriptor.AutoCloseInputStream(copy).use { it.readBytes() }
     }
 }

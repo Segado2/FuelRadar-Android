@@ -11,7 +11,7 @@ App Android nativa en español para comparar gasolineras cercanas. Kotlin, Jetpa
 - **Mis vales** guarda manualmente nombre, programa, código opcional y caducidad de vales que ya tengas. Permite copiar el código, marcarlo usado o eliminar la anotación. No crea, activa ni canjea cupones, ni importa cuentas de otras apps. No genera QR que puedan confundirse con vales oficiales.
 - Calculadora por estación: litros, descuento inmediato en céntimos/litro, vale fijo en euros o saldo futuro. Solo simula una ventaja cada vez, sin combinar campañas. El saldo futuro aparece separado y **no reduce el pago de hoy**. No se modifica el orden por precio oficial del Radar.
 
-Instala la nueva versión sobre la anterior para conservar tus datos (misma identidad de firma de Actions). La app solicita ubicación solo al usar GPS; no hace falta una cuenta FuelRadar.
+**Al actualizar desde la primera versión 1.0:** su clave debug no se conservó en Actions, por lo que Android no permite instalar 1.1 encima. Es necesario desinstalar 1.0 e instalar este APK; se perderán el histórico y los ajustes locales. Desde 1.1 el workflow genera y conserva la clave en una ruta explícita. La app solicita ubicación solo al usar GPS; no hace falta una cuenta FuelRadar.
 
 ### Descuentos: alcance y fuentes
 

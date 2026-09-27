@@ -43,12 +43,14 @@ fun date(time: Long): String = if (time == 0L) "Sin datos" else SimpleDateFormat
         onSecondary = Ink, secondaryContainer = Color(0xFF24564F), onSecondaryContainer = Teal,
         background = Ink, surface = PanelColor, onSurface = Color(0xFFF0FBFF),
         surfaceVariant = Color(0xFF1C414B), onSurfaceVariant = Muted, onBackground = Color(0xFFF0FBFF),
-        error = Red, outline = Color(0xFF46636C)), content = content)
+        error = Red, outline = Color(0xFF46636C))) {
+        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onBackground, content = content)
+    }
 }
 
 @Composable internal fun Panel(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
     Card(modifier.fillMaxWidth(), shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = PanelColor.copy(alpha = .96f)),
+        colors = CardDefaults.cardColors(containerColor = PanelColor.copy(alpha = .96f), contentColor = MaterialTheme.colorScheme.onSurface),
         border = BorderStroke(1.dp, Teal.copy(alpha = .12f))) {
         Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(10.dp), content = content)
     }
