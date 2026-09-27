@@ -2,6 +2,37 @@
 
 App Android nativa en español para comparar gasolineras cercanas. Kotlin, Jetpack Compose y Material 3. Compatible con **Android 8.0 o posterior**.
 
+## Novedades de la versión 1.1
+
+- Diseño oscuro con degradados azul, turquesa y verde lima, tarjetas con contraste y navegación inferior: **Radar, Ahorro, Mis vales y Ajustes**.
+- Botones que responden al pulsar, transiciones entre menús y la mascota original **Chispa**, que saluda al tocarla. Las animaciones son breves y respetan la escala de animación del sistema; no hay animación continua en segundo plano.
+- Guía de programas **Waylet, Moeve gow, miBP, Mundo Galp y El Club Carrefour**, favoritos guardados en el móvil, enlaces oficiales y pasos para obtener sus ventajas.
+- Estaciones cercanas de cada marca para el carburante y radio elegidos. La coincidencia usa el rótulo oficial: **no garantiza la adhesión de esa estación ni la elegibilidad de tu cuenta**.
+- **Mis vales** guarda manualmente nombre, programa, código opcional y caducidad de vales que ya tengas. Permite copiar el código, marcarlo usado o eliminar la anotación. No crea, activa ni canjea cupones, ni importa cuentas de otras apps. No genera QR que puedan confundirse con vales oficiales.
+- Calculadora por estación: litros, descuento inmediato en céntimos/litro, vale fijo en euros o saldo futuro. Solo simula una ventaja cada vez, sin combinar campañas. El saldo futuro aparece separado y **no reduce el pago de hoy**. No se modifica el orden por precio oficial del Radar.
+
+Instala la nueva versión sobre la anterior para conservar tus datos (misma identidad de firma de Actions). La app solicita ubicación solo al usar GPS; no hace falta una cuenta FuelRadar.
+
+### Descuentos: alcance y fuentes
+
+Guía revisada el **27/09/2026**. No se fijan importes publicitarios en la app: las campañas, fechas, tipos de gasolina, mínimos, límites y requisitos cambian. Después de 30 días la guía muestra un aviso para volver a comprobar las condiciones. Los precios oficiales se actualizan automáticamente; **el catálogo orientativo de programas no es un servicio de promociones en tiempo real**.
+
+Fuentes oficiales usadas:
+
+- [Waylet / Repsol](https://www.repsol.es/particulares/soluciones-energeticas/coche/): saldo y cupones; pago e identificación según las condiciones.
+- [Moeve gow](https://www.moeve.es/es/particular/club-gow): saldo, campañas y consulta de condiciones.
+- [miBP](https://mibp.es/): Ahorro miBP y promociones que pueden exigir activación o limitarse por zona.
+- [Mundo Galp](https://www.galp.com/es/mundo-galp): promociones de la cuenta y estaciones adheridas indicadas en cada cupón.
+- [El Club Carrefour](https://www.carrefour.es/CLUBCARREFOUR/partners/gasolineras-carrefour/): acumulación en ChequeAhorro para compras posteriores según las condiciones, distinta de una rebaja inmediata en carburante.
+
+FuelRadar abre estos sitios en el navegador o en la aplicación que Android tenga asociada al enlace. El alta, los datos personales, la activación, el pago y el canje los gestiona cada proveedor. No hay API privada integrada, afiliación ni acuerdo comercial con estas marcas. Para emitir o recuperar automáticamente cupones personales haría falta una integración autorizada por el proveedor; nunca se promete un vale antes de que el emisor lo conceda.
+
+Los vales locales no se envían a un servidor y se excluyen de las copias y transferencias Android configurables por la app. Desinstalar o borrar los datos de FuelRadar elimina las anotaciones. No guardes tarjetas bancarias ni contraseñas en el campo de código.
+
+### Mascota
+
+Chispa es una mascota original generada con la herramienta integrada de imágenes y se incluye en `app/src/main/res/drawable-nodpi/mascot_chispa.png`, con fondo transparente. El prompt de creación está en [docs/mascot-prompt.txt](docs/mascot-prompt.txt).
+
 ## Descargar e instalar el APK
 
 1. Inicia sesión en GitHub y entra en [Actions → Android APK](https://github.com/Segado2/FuelRadar-Android/actions/workflows/android.yml).

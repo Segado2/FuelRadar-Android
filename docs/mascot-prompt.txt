@@ -1,0 +1,5 @@
+Modo: herramienta integrada image_gen (no CLI).
+Mascota: Chispa, ilustración original para FuelRadar. Fondo transparente preservado.
+
+Prompt utilizado:
+Use case: stylized-concept. Asset type: original mascot for FuelRadar, a Spanish Android app that helps drivers find petrol stations and save on gasoline. Create ONE polished original friendly mascot: an emerald and turquoise fuel-drop-shaped little radar robot, rounded teardrop body, expressive bright eyes on a dark navy glass faceplate, a small lime radar ring integrated into its head, tiny rounded hands and feet, welcoming wave, confident playful smile, premium soft 3D clay render, clean broad shapes readable as a small mobile-app illustration. Full body centered with generous margin. Dark teal, vivid mint and electric lime details, restrained highlights, no text, no letters, no logos of other brands, no coins, no coupons, no extra characters. Genuinely transparent background with alpha, no checkerboard, no cast background, no frame. It will appear over a dark navy-to-emerald gradient. This is a production PNG mascot cutout, not an app screenshot.

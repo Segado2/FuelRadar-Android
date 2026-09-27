@@ -15,14 +15,17 @@ data class ScreenState(
     val sourceAt: Long = 0, val checkedAt: Long = 0, val loading: Boolean = true,
     val locating: Boolean = false, val error: String? = null, val alerts: Boolean = false,
     val notificationAllowed: Boolean = false, val history: List<PriceSample> = emptyList(),
-    val selected: Station? = null, val historyLoading: Boolean = false
+    val selected: Station? = null, val historyLoading: Boolean = false,
+    val programs: Set<String> = emptySet(), val vouchers: List<SavedVoucher> = emptyList()
 )
 
 class FuelViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = (application as FuelRadarApplication).repository
     private val settings = repository.settings
+    private val voucherStore = VoucherStore(application)
     private val mutable = MutableStateFlow(ScreenState(position = settings.position, fuel = settings.fuel,
-        radius = settings.radius, order = settings.order, alerts = settings.alerts, referenceName = settings.referenceName))
+        radius = settings.radius, order = settings.order, alerts = settings.alerts, referenceName = settings.referenceName,
+        programs = settings.programs, vouchers = voucherStore.read()))
     val state = mutable.asStateFlow()
     private var refreshing = false
     init {
@@ -95,4 +98,16 @@ class FuelViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
     fun closeHistory() { mutable.update { it.copy(selected = null) } }
+    fun followProgram(id: String) {
+        if (RewardCatalog.find(id) == null) return
+        settings.programs = if (id in settings.programs) settings.programs - id else settings.programs + id
+        mutable.update { it.copy(programs = settings.programs) }
+    }
+    fun addVoucher(programId: String, title: String, code: String, expiry: String): Boolean {
+        val saved = voucherStore.add(programId, title, code, expiry)
+        if (saved) mutable.update { it.copy(vouchers = voucherStore.read()) }
+        return saved
+    }
+    fun markVoucherUsed(id: String, used: Boolean) { voucherStore.markUsed(id, used); mutable.update { it.copy(vouchers = voucherStore.read()) } }
+    fun removeVoucher(id: String) { voucherStore.remove(id); mutable.update { it.copy(vouchers = voucherStore.read()) } }
 }

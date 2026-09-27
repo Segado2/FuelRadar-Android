@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-feature android:name="android.hardware.location.gps" android:required="false" />
     <application android:name=".FuelRadarApplication" android:allowBackup="false"
+        android:fullBackupContent="false" android:dataExtractionRules="@xml/data_extraction_rules"
         android:label="FuelRadar" android:icon="@drawable/ic_fuelradar"
         android:theme="@style/Theme.FuelRadar" android:supportsRtl="true"
         android:usesCleartextTraffic="false">

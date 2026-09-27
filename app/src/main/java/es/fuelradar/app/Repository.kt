@@ -12,6 +12,9 @@ import java.net.URL
 
 class Settings(context: Context) {
     private val prefs = context.getSharedPreferences("fuelradar", Context.MODE_PRIVATE)
+    var programs: Set<String>
+        get() = prefs.getStringSet("programs", emptySet())?.toSet() ?: emptySet()
+        set(value) { prefs.edit().putStringSet("programs", value.toSet()).apply() }
     var radius: Int
         get() = prefs.getInt("radius", 10).takeIf { it in listOf(10, 25, 50) } ?: 10
         set(value) { prefs.edit().putInt("radius", value).apply() }
