@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class ScreenState(
-    val stations: List<Station> = emptyList(), val position: Position? = null,
+    val stations: List<Station> = emptyList(), val position: Position? = null, val referenceName: String = "Ubicación guardada",
     val fuel: Fuel = Fuel.GASOLINE, val radius: Int = 10, val order: SortOrder = SortOrder.PRICE,
     val sourceAt: Long = 0, val checkedAt: Long = 0, val loading: Boolean = true,
     val locating: Boolean = false, val error: String? = null, val alerts: Boolean = false,
@@ -22,7 +22,7 @@ class FuelViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = (application as FuelRadarApplication).repository
     private val settings = repository.settings
     private val mutable = MutableStateFlow(ScreenState(position = settings.position, fuel = settings.fuel,
-        radius = settings.radius, order = settings.order, alerts = settings.alerts))
+        radius = settings.radius, order = settings.order, alerts = settings.alerts, referenceName = settings.referenceName))
     val state = mutable.asStateFlow()
     private var refreshing = false
     init {
@@ -72,7 +72,8 @@ class FuelViewModel(application: Application) : AndroidViewModel(application) {
                 if (position == null) error("No hay ubicación disponible. Activa la ubicación del móvil, revisa el permiso o busca un municipio.")
                 else {
                     settings.position = position
-                    mutable.update { it.copy(position = position) }
+                    settings.referenceName = "Tu ubicación"
+                    mutable.update { it.copy(position = position, referenceName = settings.referenceName) }
                 }
             } finally { mutable.update { it.copy(locating = false) } }
         }
@@ -82,7 +83,8 @@ class FuelViewModel(application: Application) : AndroidViewModel(application) {
         if (stations.isEmpty()) return
         val position = Position(stations.map { it.lat }.average(), stations.map { it.lon }.average(), System.currentTimeMillis())
         settings.position = position
-        mutable.update { it.copy(position = position, error = "Centro aproximado de $city seleccionado. Usa GPS para calcular desde tu posición real.") }
+        settings.referenceName = "Centro aproximado · $city"
+        mutable.update { it.copy(position = position, referenceName = settings.referenceName, error = null) }
     }
     fun showHistory(station: Station) {
         val fuel = mutable.value.fuel

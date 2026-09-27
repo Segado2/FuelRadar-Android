@@ -24,6 +24,9 @@ class Settings(context: Context) {
     var alerts: Boolean
         get() = prefs.getBoolean("alerts", false)
         set(value) { prefs.edit().putBoolean("alerts", value).apply() }
+    var referenceName: String
+        get() = prefs.getString("referenceName", "Ubicación guardada") ?: "Ubicación guardada"
+        set(value) { prefs.edit().putString("referenceName", value).apply() }
     var position: Position?
         get() = if (!prefs.contains("lat")) null else Position(
             Double.fromBits(prefs.getLong("lat", 0)), Double.fromBits(prefs.getLong("lon", 0)), prefs.getLong("locationAt", 0))

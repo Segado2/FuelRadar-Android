@@ -25,21 +25,23 @@ class SmokeTest {
         app.repository.settings.alerts = false
         val vm = FuelViewModel(app)
         compose.setContent { FuelRadarTheme { FuelRadarScreen(vm) } }
-        compose.waitUntil(10_000) { compose.onAllNodesWithText("1 gasolineras · Gasolina 95 E5").fetchSemanticsNodes().isNotEmpty() }
+        compose.waitUntil(10_000) { vm.state.value.stations.isNotEmpty() && !vm.state.value.loading }
         compose.onNodeWithText("FuelRadar").assertIsDisplayed()
         compose.onRoot().captureToImage().asAndroidBitmap().let { bitmap ->
             File(app.getExternalFilesDir(null), "fuelradar-home.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
         }
         compose.onNodeWithText("25 km").performClick()
         compose.onNodeWithText("Distancia", substring = false).performClick()
-        compose.onNodeWithText("Estación de prueba").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithTag("station-list").performScrollToNode(hasText("Estación de prueba"))
+        compose.onNodeWithText("Estación de prueba").assertIsDisplayed()
         compose.onNodeWithText("1,539").assertIsDisplayed()
         compose.onNodeWithText("Histórico", substring = false).performScrollTo().performClick()
         compose.onNodeWithText("Gasolina 95 E5 · últimos 90 días").assertIsDisplayed()
         compose.onNodeWithText("1,549 €/l", substring = false).assertExists()
         compose.onNodeWithText("Cerrar").performClick()
-        compose.onNodeWithText("Diésel", substring = false).performScrollTo().performClick()
-        compose.onNodeWithText("Estación de prueba").performScrollTo()
+        compose.onNodeWithTag("station-list").performScrollToNode(hasText("Diésel"))
+        compose.onNodeWithText("Diésel", substring = false).performClick()
+        compose.onNodeWithTag("station-list").performScrollToNode(hasText("Estación de prueba"))
         compose.onNodeWithText("1,449").assertIsDisplayed()
     }
 }

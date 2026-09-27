@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -68,6 +69,7 @@ class MainActivity : ComponentActivity() {
     val state by vm.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     var cityDialog by remember { mutableStateOf(false) }
+    var alertsDialog by remember { mutableStateOf(false) }
     val owner = LocalLifecycleOwner.current
     DisposableEffect(owner) {
         val observer = LifecycleEventObserver { _, event -> if (event == Lifecycle.Event.ON_RESUME) vm.resume() }
@@ -101,7 +103,7 @@ class MainActivity : ComponentActivity() {
             }
         }, colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background))
     }) { padding ->
-        LazyColumn(Modifier.fillMaxSize().padding(padding), contentPadding = PaddingValues(start = 20.dp, end = 20.dp, bottom = 28.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+        LazyColumn(Modifier.fillMaxSize().padding(padding).testTag("station-list"), contentPadding = PaddingValues(start = 20.dp, end = 20.dp, bottom = 28.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
             item {
                 Card(colors = CardDefaults.cardColors(containerColor = Ink), shape = RoundedCornerShape(28.dp)) {
                     Column(Modifier.padding(24.dp)) {
@@ -116,7 +118,7 @@ class MainActivity : ComponentActivity() {
                             Text(if (state.locating) "Buscando ubicación…" else "Usar mi ubicación")
                         }
                         TextButton(onClick = { cityDialog = true }, enabled = state.stations.isNotEmpty()) { Text("Buscar municipio", color = Color.White) }
-                        if (state.position != null) Text("Referencia guardada · ${date(state.position!!.savedAt)}", style = MaterialTheme.typography.labelSmall, color = Color(0xFFD3E6DC))
+                        if (state.position != null) Text("${state.referenceName} · ${date(state.position!!.savedAt)}", style = MaterialTheme.typography.labelSmall, color = Color(0xFFD3E6DC))
                     }
                 }
             }
@@ -135,6 +137,11 @@ class MainActivity : ComponentActivity() {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text("Orden", Modifier.width(46.dp), style = MaterialTheme.typography.labelLarge)
                         SortOrder.entries.forEach { order -> FilterChip(selected = state.order == order, onClick = { vm.setOrder(order) }, label = { Text(order.label) }) }
+                    }
+                    TextButton(onClick = { alertsDialog = true }) {
+                        Icon(Icons.Outlined.NotificationsActive, null, Modifier.size(18.dp))
+                        Spacer(Modifier.width(8.dp))
+                        Text(if (state.alerts && state.notificationAllowed) "Avisos activados" else "Configurar avisos de precios")
                     }
                 }
             }
@@ -183,6 +190,19 @@ class MainActivity : ComponentActivity() {
         }
     }
     if (cityDialog) CityDialog(state.stations, { cityDialog = false }) { vm.useCity(it); cityDialog = false }
+    if (alertsDialog) AlertDialog(onDismissRequest = { alertsDialog = false }, title = { Text("Avisos de precios") }, text = {
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Text("Cambios de al menos 0,01 €/l en ${state.fuel.label}, dentro de ${state.radius} km. Usaremos ${state.referenceName.lowercase()}.")
+            Text("Comprobación aproximada cada 6 horas. Android puede retrasarla para ahorrar batería.")
+            if (state.position == null) Text("Selecciona una ubicación o municipio para recibir avisos cercanos.")
+            Switch(checked = state.alerts && state.notificationAllowed, onCheckedChange = { enabled ->
+                if (!enabled) vm.alerts(false)
+                else if (Build.VERSION.SDK_INT >= 33 && !PriceNotifications.allowed(context)) notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+                else if (!PriceNotifications.allowed(context)) openIntent(context, Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName))
+                else vm.alerts(true)
+            })
+        }
+    }, confirmButton = { TextButton(onClick = { alertsDialog = false }) { Text("Cerrar") } })
     state.selected?.let { station -> HistoryDialog(station, state.fuel, state.history, state.historyLoading, vm::closeHistory) }
 }
 
